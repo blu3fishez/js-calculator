@@ -1,0 +1,6 @@
+
+class System {
+    constructor(){
+        
+    }
+}
