@@ -9,3 +9,7 @@ How to play?
 > arrow Right & Left : Move Piece.
 > SpaceBar : Hard Drop.
 > Key Z : rotate Piece clockwise.
+
+# Version
+
+0.0.0 : Developed Main Functionalities except rotation.

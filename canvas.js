@@ -8,7 +8,7 @@ class Canvas {
     init(){
         this.fillRect(0, 0, CANVAS_RIGHT, CANVAS_BOTTOM, "rgb(245,245,245)");
         for(let i = 0; i<CANVAS_BOTTOM; i += 30){
-            for(let j = 0; j<CANVAS_WIDTH; j += 30){
+            for(let j = 0; j<CANVAS_RIGHT; j += 30){
                 this.fillRect(j, i, j+30, i+30, "rgb(200, 200, 200)");
                 this.fillRect(j + 1, i + 1, j + 29, i+29, "rgb(245, 245, 245)");
             }
