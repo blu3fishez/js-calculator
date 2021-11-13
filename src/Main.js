@@ -1,49 +1,55 @@
 
 class Main {
+    static LAND_TIMEOUT = 300;
     static main(){
-        let landTime = 0;
-        let slowFallTime = 0;
         let mainGraphic = new Canvas("mycanvas");
         let gameBoard = new Board();
-        let score = 0;
-        let scoreElement = document.getElementById("score");
+        let gameScore = 0;
+        let gameScoreElement = document.querySelector('#score');
 
         let initialBlocks = Main.setInitialBlocks();
-        let handleMino = null;
+        let focusedMino = null;
+        let landTime = 0;
 
         mainGraphic.init();
 
-        let Level = setInterval(function(){
-            handleMino.moveMino(gameBoard.gameBoard);
-            score++;
-            scoreElement.innerHTML = "Score : " + score;
+        const INTERV_SCORE = setInterval(function(){
+            focusedMino.moveMino(gameBoard.gameBoard);
+            gameScore++;
+            gameScoreElement.innerHTML = "Score : " + gameScore;
         }, 450);
 
-        let NewMino = setInterval(function(){
-            if(handleMino == null){
-                handleMino = new Tetrimino(initialBlocks.pop());
+        const INTERV_MINO_SPAWN = setInterval(function(){
+            if(focusedMino == null){
+                focusedMino = new Tetrimino(initialBlocks.pop());
                 if(initialBlocks.length == 0) initialBlocks = Main.setInitialBlocks();
-                if(handleMino.checkMinoLand(gameBoard.gameBoard)){
+                if(focusedMino.checkMinoLand(gameBoard.gameBoard)){
                     alert("Game Over!");
-                    clearInterval(Level);
-                    clearInterval(NewMino);
+                    clearInterval(INTERV_SCORE);
+                    clearInterval(INTERV_MINO_SPAWN);
                 }
             }
             mainGraphic.fillBoard(gameBoard.gameBoard);
-            if(handleMino != null){
-                mainGraphic.fillHand(handleMino);
+            if(focusedMino != null){
+
+                mainGraphic.fillHand(focusedMino);
             }
-            if(handleMino.checkMinoLand(gameBoard.gameBoard) && landTime++ > 300){
-                for(let i = 0; i<handleMino.block.length; ++i){
-                    gameBoard.gameBoard[handleMino.block[i].y][handleMino.block[i].x] = handleMino.color;
+            else{
+                mainGraphic.fillBoard(gameBoard.gameBoard);
+            }
+
+            if(focusedMino.checkMinoLand(gameBoard.gameBoard) && landTime++ > Main.LAND_TIMEOUT){
+                for(let i = 0; i<focusedMino.block.length; ++i){
+                    gameBoard.gameBoard[focusedMino.block[i].y][focusedMino.block[i].x] = focusedMino.color;
                 }
-                handleMino = null;
+                focusedMino = null;
                 landTime = 0;
+                mainGraphic.fillBoard(gameBoard.gameBoard);
             }
-        }, 5);
+        }, 10);
         
-        setInterval(function(){
-            for(let i = 0; i<BOARD_HEIGHT; ++i){
+        const INTERV_MINO_LINE_CLEAR = setInterval(function(){
+            for(let i = 3; i<BOARD_HEIGHT; ++i){
                 let clear = true;
                 for(let j = 0; j<BOARD_WIDTH; ++j){
                     if(gameBoard.gameBoard[i][j] == -1) clear = false;
@@ -55,24 +61,24 @@ class Main {
                             else gameBoard.gameBoard[k + 1][j] = gameBoard.gameBoard[k][j];
                         }
                     }
-                    mainGraphic.fillBoard(gameBoard.gameBoard);
-                    score += 1000;
-                    scoreElement.innerHTML = "Score : " + score;
+                    // mainGraphic.fillBoard(gameBoard.gameBoard);
+                    gameScore += 1000;
+                    gameScoreElement.innerHTML = "Score : " + gameScore;
                 }
             }
-        }, 5);
+        }, 10);
         
         window.addEventListener("keydown", function(e){
             if(e.keyCode == '37'){
                 //Left Arrow
                 let Movable = true;
                 for(let i = 0; i<4; ++i){
-                    if(handleMino.block[i].x == 0) Movable = false;
-                    if(gameBoard.gameBoard[handleMino.block[i].y][handleMino.block[i].x - 1] != -1) Movable = false;
+                    if(focusedMino.block[i].x == 0) Movable = false;
+                    if(gameBoard.gameBoard[focusedMino.block[i].y][focusedMino.block[i].x - 1] != -1) Movable = false;
                 }
                 if(Movable){
                     for(let i = 0; i<4; ++i){
-                        handleMino.block[i].x--;
+                        focusedMino.block[i].x--;
                     }
                 }
             }
@@ -80,18 +86,18 @@ class Main {
                 //Right Arrow
                 let Movable = true;
                 for(let i = 0; i<4; ++i){
-                    if(handleMino.block[i].x == BOARD_WIDTH - 1) Movable = false;
-                    if(gameBoard.gameBoard[handleMino.block[i].y][handleMino.block[i].x + 1] != -1) Movable = false;
+                    if(focusedMino.block[i].x == BOARD_WIDTH - 1) Movable = false;
+                    if(gameBoard.gameBoard[focusedMino.block[i].y][focusedMino.block[i].x + 1] != -1) Movable = false;
                 }
                 if(Movable){
                     for(let i = 0; i<4; ++i){
-                        handleMino.block[i].x++;
+                        focusedMino.block[i].x++;
                     }
                 }
             }
             if(e.code == 'Space'){
                 let fastDowned = false;
-                let checkMino = handleMino;
+                let checkMino = focusedMino;
                 while(!fastDowned){
                     if(checkMino.checkMinoLand(gameBoard.gameBoard)){
                         fastDowned = true;
@@ -100,7 +106,7 @@ class Main {
                         checkMino.moveMino(gameBoard.gameBoard);
                     }
                 }
-                handleMino = checkMino;
+                focusedMino = checkMino;
                 landTime = 301;
             }
             if(String.fromCharCode(e.keyCode) == 'Z'){
