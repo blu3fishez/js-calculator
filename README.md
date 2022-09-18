@@ -1,15 +1,5 @@
-# js-calculator
+# Javascript Tetris
 
-My First JavaScript Project and My First Programming project at the same time.
+another simple project without tutorial
 
-# Simple Tetris !
-
-How to play?
-
-> arrow Right & Left : Move Piece.
-> SpaceBar : Hard Drop.
-> Key Z : rotate Piece clockwise.
-
-# Version
-
-0.0.0 : Developed Main Functionalities except rotation.
+try tetris with javascript and react!
